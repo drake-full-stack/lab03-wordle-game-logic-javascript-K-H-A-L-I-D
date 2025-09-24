@@ -68,14 +68,54 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===== YOUR CHALLENGE: IMPLEMENT THESE FUNCTIONS =====
 
 // TODO: Add keyboard event listener
-// document.addEventListener("keydown", (event) => {
-//     // Your code here!
-// });
+document.addEventListener("keydown", (event) => {
+    const key = event.key.toUpperCase();
+    
+    logDebug(`Key pressed: "${event.key}"`, 'info');
+    
+    // Check if game is over first
+    if (gameOver) {
+        logDebug("Game is over!", 'warning');
+        return;
+    }
+    
+    // Handle different key types
+    if (key === "BACKSPACE") {
+        deleteLetter();
+    } else if (key === "ENTER") {
+        submitGuess();
+    } else if (/^[A-Z]$/.test(key)) {
+        addLetter(key);
+    } else {
+        logDebug(`Ignored key: "${event.key}" (not a valid letter, Enter, or Backspace)`, 'warning');
+    }
+ });
 
 // TODO: Implement addLetter function
-// function addLetter(letter) {
-//     // Your code here!
-// }
+ function addLetter(letter) {
+    logDebug(`addLetter("${letter}") called`, 'info');
+    
+    // Check if current row is full
+    if (currentTile >= 5) {
+        logDebug("Row is full! Cannot add more letters.", 'error');
+        return;
+    }
+    
+    // Get the current row element
+    const currentRowElement = rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    const tile = tiles[currentTile];
+    
+    // Set the tile content and styling
+    tile.textContent = letter;
+    tile.classList.add('filled');
+    
+    // Move to next position
+    currentTile++;
+    
+    logDebug(`Added "${letter}" to position ${currentTile - 1} in row ${currentRow}`, 'success');
+    logDebug(`Current word progress: "${getCurrentWord()}"`, 'info');
+ }
 
 // TODO: Implement deleteLetter function  
 // function deleteLetter() {
