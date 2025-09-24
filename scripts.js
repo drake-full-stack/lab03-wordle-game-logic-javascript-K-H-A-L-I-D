@@ -147,9 +147,49 @@ document.addEventListener("keydown", (event) => {
  }
 
 // TODO: Implement submitGuess function
-// function submitGuess() {
-//     // Your code here!
-// }
+ function submitGuess() {
+    logDebug(`submitGuess() called`, 'info');
+    
+    // Check if row has exactly 5 letters
+    if (currentTile !== 5) {
+        alert("Please enter exactly 5 letters!");
+        logDebug("Cannot submit - need exactly 5 letters", 'error');
+        return;
+    }
+    
+    // Get the current row element and build the guess
+    const currentRowElement = rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    let guess = '';
+    
+    tiles.forEach(tile => {
+        guess += tile.textContent;
+    });
+    
+    logDebug(`Submitting guess: "${guess}" (Target: "${TARGET_WORD}")`, 'info');
+    
+    // Check the guess and apply colors
+    const result = checkGuess(guess, tiles);
+    logDebug(`Guess result: ${JSON.stringify(result)}`, 'info');
+    
+    // Move to next row
+    currentRow++;
+    currentTile = 0;
+    
+    // Check win condition
+    if (guess === TARGET_WORD) {
+        gameOver = true;
+        setTimeout(() => alert("🎉 Congratulations! You won!"), 500);
+        logDebug("GAME WON!", 'success');
+    } else if (currentRow >= 6) {
+        // Check lose condition
+        gameOver = true;
+        setTimeout(() => alert(`Game Over! The word was "${TARGET_WORD}"`), 500);
+        logDebug("GAME LOST - Used all 6 rows", 'error');
+    } else {
+        logDebug(`Moving to row ${currentRow}. ${6 - currentRow} guesses remaining.`, 'info');
+    }
+ }
 
 // TODO: Implement checkGuess function (the hardest part!)
 // function checkGuess(guess, tiles) {
