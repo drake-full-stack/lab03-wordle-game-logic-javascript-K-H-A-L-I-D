@@ -192,8 +192,60 @@ document.addEventListener("keydown", (event) => {
  }
 
 // TODO: Implement checkGuess function (the hardest part!)
-// function checkGuess(guess, tiles) {
-//     // Your code here!
-//     // Remember: handle duplicate letters correctly
-//     // Return the result array
-// }
+ function checkGuess(guess, tiles) {
+    logDebug(`Starting analysis for "${guess}" against target "${TARGET_WORD}"`, 'info');
+    
+    // Split words into arrays for easier manipulation
+    const target = TARGET_WORD.split('');
+    const guessArray = guess.split('');
+    const result = ['absent', 'absent', 'absent', 'absent', 'absent'];
+    
+    logDebug(`Target array: [${target.join(', ')}]`, 'info');
+    logDebug(`Guess array: [${guessArray.join(', ')}]`, 'info');
+    
+    // STEP 1: Find exact matches (correct position)
+    logDebug(`STEP 1: Finding exact matches...`, 'info');
+    for (let i = 0; i < 5; i++) {
+        if (guessArray[i] === target[i]) {
+            result[i] = 'correct';
+            // Mark both as used by setting to null
+            target[i] = null;
+            guessArray[i] = null;
+            logDebug(`Position ${i}: "${guess[i]}" is CORRECT`, 'success');
+        }
+    }
+    
+    logDebug(`After Step 1 - remaining target: [${target.join(', ')}]`, 'info');
+    logDebug(`After Step 1 - remaining guess: [${guessArray.join(', ')}]`, 'info');
+    
+    // STEP 2: Find wrong position matches (present)
+    logDebug(`STEP 2: Finding wrong position matches...`, 'info');
+    for (let i = 0; i < 5; i++) {
+        if (guessArray[i] !== null) { // Only check unused letters from guess
+            // Look for this letter in remaining target letters
+            for (let j = 0; j < 5; j++) {
+                if (target[j] === guessArray[i]) {
+                    result[i] = 'present';
+                    target[j] = null; // Mark target letter as used
+                    logDebug(`Position ${i}: "${guess[i]}" is PRESENT (found at target position ${j})`, 'info');
+                    break; // Found one match, stop looking
+                }
+            }
+            if (result[i] === 'absent') {
+                logDebug(`Position ${i}: "${guess[i]}" is ABSENT`, 'info');
+            }
+        }
+    }
+    
+    // Apply CSS classes to tiles based on results
+    tiles.forEach((tile, index) => {
+        // Remove any existing color classes
+        tile.classList.remove('correct', 'present', 'absent');
+        // Add the new class based on result
+        tile.classList.add(result[index]);
+        logDebug(`Tile ${index}: Applied class "${result[index]}"`, 'info');
+    });
+    
+    logDebug(`🏁 Final result: [${result.join(', ')}]`, 'success');
+    return result;
+ }
