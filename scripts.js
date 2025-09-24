@@ -118,9 +118,33 @@ document.addEventListener("keydown", (event) => {
  }
 
 // TODO: Implement deleteLetter function  
-// function deleteLetter() {
-//     // Your code here!
-// }
+ function deleteLetter() {
+    logDebug(`deleteLetter() called`, 'info');
+    
+    // Check if there are letters to delete
+    if (currentTile <= 0) {
+        logDebug("No letters to delete in current row", 'error');
+        return;
+    }
+    
+    // Move back one position first
+    currentTile--;
+    
+    // Get the current row element and the tile to clear
+    const currentRowElement = rows[currentRow];
+    const tiles = currentRowElement.querySelectorAll('.tile');
+    const tile = tiles[currentTile];
+    
+    // Store the letter being deleted for logging
+    const letterBeingDeleted = tile.textContent;
+    
+    // Clear the tile
+    tile.textContent = '';
+    tile.classList.remove('filled');
+    
+    logDebug(`Deleted "${letterBeingDeleted}" from position ${currentTile} in row ${currentRow}`, 'success');
+    logDebug(`Current word progress: "${getCurrentWord()}"`, 'info');
+ }
 
 // TODO: Implement submitGuess function
 // function submitGuess() {
